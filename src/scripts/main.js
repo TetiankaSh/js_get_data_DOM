@@ -3,18 +3,27 @@
 // Get all text data from span.population
 const populationSpans = document.querySelectorAll('span.population');
 
-// Convert to numbers (remove commas and parse to integer)
-const populations = Array.from(populationSpans, (span) => {
+// Parse and filter only valid numbers
+const parsedValues = Array.from(populationSpans, (span) => {
   const cleaned = span.textContent.replace(/,/g, '');
-  const value = Number.parseInt(cleaned, 10);
+  const value = Number(cleaned);
 
-  return Number.isNaN(value) ? 0 : value;
+  return Number.isFinite(value) ? value : null;
 });
 
-// Calculate total and average
-const totalPopulation = populations.reduce((sum, current) => sum + current, 0);
-const averagePopulation =
-  populations.length > 0 ? totalPopulation / populations.length : 0;
+const validPopulations = parsedValues.filter((value) => value !== null);
+
+// Calculate total and average (only with valid values)
+const totalPopulation = validPopulations.reduce(
+  (sum, current) => sum + current,
+  0,
+);
+
+let averagePopulation = 0;
+
+if (validPopulations.length > 0) {
+  averagePopulation = totalPopulation / validPopulations.length;
+}
 
 // Format numbers with thousands separator
 const formatNumber = (number) => number.toLocaleString();
